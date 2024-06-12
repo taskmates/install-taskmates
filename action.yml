@@ -74,8 +74,16 @@ runs:
         path: ${{ steps.pipx-env-setup.outputs.pipx-cache-path }}
         key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipx-${{ steps.pipx-env-setup.outputs.pipx-version }}-taskmates-${{ steps.get-taskmates-commit-hash.outputs.taskmates-commit-hash }}
 
-    - name: Install Taskmates ${{ inputs.version }}
+    - name: Install Taskmates Package ${{ inputs.version }}
       if: ${{ steps.pipx-cache.outputs.cache-hit != 'true' }}
       run: |
         pipx install --force --python 3.11 git+https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git
       shell: bash
+
+    - name: Install taskmates from taskmates/taskmates-directory
+      uses: actions/checkout@v4
+      with:
+        repository: taskmates/taskmates-directory
+        path: .taskmates/taskmates
+        token: ${{ inputs.github_token }}
+
