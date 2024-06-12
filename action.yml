@@ -1,0 +1,81 @@
+name: install-taskmates
+description: >-
+  Install Taskmates
+branding:
+  icon: code
+  color: purple
+inputs:
+  version:
+    required: false
+    default: 'main'
+    description: >-
+      Taskmates version to install
+  github_token:
+    required: true
+    description: >-
+      GitHub token to use for installing private repositories
+  python-version:
+    required: false
+    default: '3.11'
+    description: >-
+      Python version to use for installing Taskmates
+  cache-date-format:
+    required: false
+    default: '%Y-%m'
+    description: >-
+      Date format string used as cache key
+      (default is %Y-%m, so new cache is written at least once a month)
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+
+    - name: Setup pipx environment Variables
+      id: pipx-env-setup
+      # pipx default home and bin dir are not writable by the cache action
+      # so override them here and add the bin dir to PATH for later steps.
+      # This also ensures the pipx cache only contains our packages.
+      run: |
+        PIPX_CACHE_PATH="${{ github.workspace }}$/.pipx_cache"
+        mkdir -p "$PIPX_CACHE_PATH"
+        
+        echo "pipx-cache-path=${PIPX_CACHE_PATH}" >> $GITHUB_OUTPUT
+        echo "pipx-version=$(pipx --version)" >> $GITHUB_OUTPUT
+        
+        echo PIPX_HOME=${PIPX_CACHE_PATH}/pipx >> $GITHUB_ENV
+        echo PIPX_BIN_DIR=${PIPX_CACHE_PATH}/bin >> $GITHUB_ENV
+        echo PIPX_MAN_DIR=${PIPX_CACHE_PATH}/share/man >> $GITHUB_ENV
+        echo PIPX_SHARED_LIBS=${PIPX_CACHE_PATH}/pipx/shared >> $GITHUB_ENV
+        echo PIPX_LOCAL_VENVS=${PIPX_CACHE_PATH}/pipx/venvs >> $GITHUB_ENV
+        echo PIPX_LOG_DIR=${PIPX_CACHE_PATH}/pipx/logs >> $GITHUB_ENV
+        echo PIPX_TRASH_DIR=${PIPX_CACHE_PATH}/pipx/trash >> $GITHUB_ENV
+        echo PIPX_VENV_CACHEDIR=${PIPX_CACHE_PATH}/pipx/.cache >> $GITHUB_ENV
+        echo PIPX_STANDALONE_PYTHON_CACHEDIR=${PIPX_CACHE_PATH}/pipx/py >> $GITHUB_ENV        
+        
+        echo "${PIPX_CACHE_PATH}/bin" >> $GITHUB_PATH
+
+      shell: bash
+
+    - name: Get Taskmates commit hash
+      id: get-taskmates-commit-hash
+      run: |
+        TASKMATES_COMMIT_HASH=$(git ls-remote https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git HEAD | cut -f1)
+        echo "taskmates-commit-hash=$TASKMATES_COMMIT_HASH" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Pipx cache
+      id: pipx-cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pipx-env-setup.outputs.pipx-cache-path }}
+        key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipx-${{ steps.pipx-env-setup.outputs.pipx-version }}-taskmates-${{ steps.get-taskmates-commit-hash.outputs.taskmates-commit-hash }}
+
+    - name: Install Taskmates ${{ inputs.version }}
+      if: ${{ steps.pipx-cache.outputs.cache-hit != 'true' }}
+      run: |
+        pipx install --force --python 3.11 git+https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git
+      shell: bash
