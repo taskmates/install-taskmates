@@ -62,7 +62,7 @@ runs:
 
     - name: Get Taskmates commit hash
       id: get-taskmates-commit-hash
-      working-directory: ${{ runner.temp }}
+      working-directory: ${{ env.RUNNER_TEMP }}
       run: |
         TASKMATES_COMMIT_HASH=$(git ls-remote https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git HEAD | cut -f1)
         echo "taskmates-commit-hash=$TASKMATES_COMMIT_HASH" >> $GITHUB_OUTPUT
@@ -85,6 +85,6 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: taskmates/taskmates-directory
-        path: ${{ runner.temp }}/.taskmates/taskmates
+        path: ${{ env.RUNNER_TEMP }}/.taskmates/taskmates
         token: ${{ inputs.github_token }}
 
