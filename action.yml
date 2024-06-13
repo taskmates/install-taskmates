@@ -82,9 +82,6 @@ runs:
       shell: bash
 
     - name: Install taskmates from taskmates/taskmates-directory
-      uses: actions/checkout@v4
-      with:
-        repository: taskmates/taskmates-directory
-        path: ${{ runner.temp }}/.taskmates/taskmates
-        token: ${{ inputs.github_token }}
-
+      run: |
+        git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ runner.temp }}/.taskmates/taskmates
+      shell: bash
