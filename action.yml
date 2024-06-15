@@ -81,6 +81,7 @@ runs:
 
     - name: Verify Taskmates Installation
       run: |
+        mkdir -p ${{ inputs.taskmates_home }}
         taskmates --version | tee ${{ inputs.taskmates_home }}/version.txt
       shell: bash
 
