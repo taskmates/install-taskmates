@@ -79,15 +79,15 @@ runs:
         pipx install --force --python 3.11 git+https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git
       shell: bash
 
+    - name: Install taskmates from taskmates/taskmates-directory
+      run: |
+        git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ inputs.taskmates_home }}
+      shell: bash
+
     - name: Verify Taskmates Installation
       run: |
         mkdir -p ${{ inputs.taskmates_home }}
         taskmates --version | tee ${{ inputs.taskmates_home }}/version.txt
-      shell: bash
-
-    - name: Install taskmates from taskmates/taskmates-directory
-      run: |
-        git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ inputs.taskmates_home }}
       shell: bash
 
     - name: Install development tools (fd and ack)
