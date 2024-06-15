@@ -90,7 +90,7 @@ runs:
       uses: taskmates/install-taskmates@main
       with:
         version: main
-        github_token: ${{ secrets.TASKMATES_GITHUB_TOKEN }}
+        github_token: ${{ inputs.github_token }}
 
     - name: Export Taskmates Path
       run: |
