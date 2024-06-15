@@ -92,6 +92,11 @@ runs:
         version: main
         github_token: ${{ secrets.TASKMATES_GITHUB_TOKEN }}
 
+    - name: Export Taskmates Path
+      run: |
+        echo MARKDOWN_CHAT_PATH=${{ runner.temp }}/chat.md >> $GITHUB_ENV
+      shell: bash
+
     - name: Install development tools (fd and ack)
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
