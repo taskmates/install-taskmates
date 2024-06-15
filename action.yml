@@ -10,6 +10,10 @@ inputs:
     default: 'main'
     description: >-
       Taskmates version to install
+  taskmates_home:
+    required: true
+    description: >-
+      Taskmates home directory
   github_token:
     required: true
     description: >-
@@ -19,12 +23,6 @@ inputs:
     default: '3.11'
     description: >-
       Python version to use for installing Taskmates
-  cache-date-format:
-    required: false
-    default: '%Y-%m'
-    description: >-
-      Date format string used as cache key
-      (default is %Y-%m, so new cache is written at least once a month)
 runs:
   using: composite
   steps:
@@ -83,7 +81,7 @@ runs:
 
     - name: Install taskmates from taskmates/taskmates-directory
       run: |
-        git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ runner.temp }}/.taskmates/taskmates
+        git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ inputs.taskmates_home }}
       shell: bash
 
     - name: Export Taskmates Path
