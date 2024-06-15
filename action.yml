@@ -84,11 +84,6 @@ runs:
         git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ inputs.taskmates_home }}
       shell: bash
 
-    - name: Export Taskmates Path
-      run: |
-        echo MARKDOWN_CHAT_PATH=${{ runner.temp }}/chat.md >> $GITHUB_ENV
-      shell: bash
-
     - name: Install development tools (fd and ack)
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
