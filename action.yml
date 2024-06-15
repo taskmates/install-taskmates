@@ -85,3 +85,20 @@ runs:
       run: |
         git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ runner.temp }}/.taskmates/taskmates
       shell: bash
+
+    - name: Install Taskmates
+      uses: taskmates/install-taskmates@main
+      with:
+        version: main
+        github_token: ${{ secrets.TASKMATES_GITHUB_TOKEN }}
+
+    - name: Install development tools (fd and ack)
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: fd-find ack-grep
+        version: 1.0
+    - name: Create symlinks
+      run: |
+        sudo ln -s /usr/bin/fdfind /usr/local/bin/fd
+      shell: bash
+
