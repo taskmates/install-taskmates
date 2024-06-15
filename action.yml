@@ -86,12 +86,6 @@ runs:
         git clone https://${{ inputs.github_token }}@github.com/taskmates/taskmates-directory.git ${{ runner.temp }}/.taskmates/taskmates
       shell: bash
 
-    - name: Install Taskmates
-      uses: taskmates/install-taskmates@main
-      with:
-        version: main
-        github_token: ${{ inputs.github_token }}
-
     - name: Export Taskmates Path
       run: |
         echo MARKDOWN_CHAT_PATH=${{ runner.temp }}/chat.md >> $GITHUB_ENV
