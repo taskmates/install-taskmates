@@ -10,15 +10,6 @@ inputs:
     default: 'main'
     description: >-
       Taskmates version to install
-  github_token:
-    required: true
-    description: >-
-      GitHub token to use for installing private repositories
-  python-version:
-    required: false
-    default: '3.11'
-    description: >-
-      Python version to use for installing Taskmates
 runs:
   using: composite
   steps:
@@ -58,7 +49,7 @@ runs:
       id: get-taskmates-commit-hash
       working-directory: ${{ runner.temp }}
       run: |
-        TASKMATES_COMMIT_HASH=$(git ls-remote https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git HEAD | cut -f1)
+        TASKMATES_COMMIT_HASH=$(git ls-remote https://github.com/taskmates/taskmates.git HEAD | cut -f1)
         echo "taskmates-commit-hash=$TASKMATES_COMMIT_HASH" >> $GITHUB_OUTPUT
       shell: bash
 
@@ -67,12 +58,12 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.pipx-env-setup.outputs.pipx-cache-path }}
-        key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipx-${{ steps.pipx-env-setup.outputs.pipx-version }}-taskmates-${{ steps.get-taskmates-commit-hash.outputs.taskmates-commit-hash }}
+        key: ${{ runner.os }}-python-3.11-pipx-${{ steps.pipx-env-setup.outputs.pipx-version }}-taskmates-${{ steps.get-taskmates-commit-hash.outputs.taskmates-commit-hash }}
 
     - name: Install Taskmates Package ${{ inputs.version }}
       if: ${{ steps.pipx-cache.outputs.cache-hit != 'true' }}
       run: |
-        pipx install --force --python 3.11 git+https://${{ inputs.github_token }}@github.com/taskmates/taskmates.git
+        pipx install --force --python 3.11 git+https://github.com/taskmates/taskmates.git
       shell: bash
 
     - name: Verify Taskmates Installation
