@@ -18,7 +18,6 @@ jobs:
         uses: raven-actions/actionlint@v2
         with:
           fail-on-error: false
-          files: 'action.yml,.github/workflows/*'
       - name: Update Tag to Latest Commit
         if: endsWith(github.ref, github.event.repository.default_branch)
         run: |
