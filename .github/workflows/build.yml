@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run actionlint
+        id: actionlint
+        uses: raven-actions/actionlint@v2
+        with:
+          fail-on-error: false
+      - name: Update Tag to Latest Commit
+        if: endsWith(github.ref, github.event.repository.default_branch)
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com          
+          git tag -f v1 "$GITHUB_SHA"
+          git push origin v1 --force
